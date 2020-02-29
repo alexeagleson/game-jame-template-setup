@@ -17,6 +17,11 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+// const app = require('express')();
+// const server = require('http').createServer(app);
+
+// server.listen(3000);
+
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
     type Query {
@@ -49,8 +54,21 @@ app.prepare().then(() => {
     })
   );
 
+  let currentTurn = 0;
+
+  setInterval(() => {
+    currentTurn++;
+  }, 1000);
+
   server.get('/example', (req, res) => {
     res.sendStatus(200);
+  });
+
+  server.get('/current_turn', (req, res) => {
+
+
+    
+    res.status(200).send('' + currentTurn);
   });
 
   server.all('*', (req, res) => {
