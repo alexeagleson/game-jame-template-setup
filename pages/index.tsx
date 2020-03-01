@@ -6,7 +6,7 @@ const Index = () => {
 
   return (
     <>
-      <h1>GAME JAM GAME GOES IN THIS SPOT RIGHT HEREEEE</h1>
+      <h1>GAME JAM GAME !!</h1>
       {/* <button
         onClick={() => {
           axios.get('/current_turn').then(axiosResponse => {
