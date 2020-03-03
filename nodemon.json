@@ -1,6 +1,5 @@
 {
-    "verbose": true,
-    "ignore": ["node_modules", "dist", ".next"],
-    "watch": ["server/**/*.ts"],
-    "ext": "ts"
+  "verbose": true,
+  "watch": ["dist"],
+  "ext": "js"
 }

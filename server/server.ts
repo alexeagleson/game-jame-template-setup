@@ -10,6 +10,8 @@ import { buildSchema } from 'graphql';
 import { Pool } from 'pg';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import socketIo, { Socket } from 'socket.io';
+import http from 'http';
 
 // const port = parseInt(process.env.PORT as string, 10) || 3001;
 const port = 4001;
@@ -37,15 +39,16 @@ const root = {
 };
 
 app.prepare().then(() => {
-  const server = express();
-  server.use(cors());
-  server.use(cookieParser());
-  server.use(express.json());
-  server.use(express.urlencoded({ extended: false }));
+  const expressHandler = express();
+  const server = http.createServer(expressHandler);
+  expressHandler.use(cors());
+  expressHandler.use(cookieParser());
+  expressHandler.use(express.json());
+  expressHandler.use(express.urlencoded({ extended: false }));
 
   const pool = new Pool();
 
-  server.use(
+  expressHandler.use(
     '/graphql',
     graphqlHTTP({
       schema,
@@ -54,29 +57,53 @@ app.prepare().then(() => {
     })
   );
 
+  let connectUserIds: string[] = [];
+
   let currentTurn = 0;
 
+  const io = socketIo(server);
+
+  
   setInterval(() => {
     currentTurn++;
-  }, 1000);
+    connectUserIds.forEach(id => {
+      io.to(id).emit('hey', `whats up ${currentTurn}`);
+    });
+  }, 10000);
 
-  server.get('/example', (req, res) => {
+  io.on('connection', socket => {
+    connectUserIds.push(socket.id);
+    console.log('a user c');
+    socket.on('disconnect', something => {
+      console.log('a user d');
+      connectUserIds = connectUserIds.filter(id => id !== socket.id);
+    });
+
+    socket.on('chat message', message => {
+      console.log(message);
+    });
+
+    console.log(connectUserIds);
+  });
+
+  // httpServer.listen(4002, function() {
+  //   console.log('listening on *:3000');
+  // });
+
+  expressHandler.get('/example', (req, res) => {
     res.sendStatus(200);
   });
 
-  server.get('/current_turn', (req, res) => {
-
-
-    
+  expressHandler.get('/current_turn', (req, res) => {
     res.status(200).send('' + currentTurn);
   });
 
-  server.all('*', (req, res) => {
+  expressHandler.all('*', (req, res) => {
     return handle(req, res);
   });
 
-  server.listen(port, err => {
-    if (err) throw err;
+  server.listen(port, () => {
+    // if (err) throw err;
     console.log(`> Ready on http://localhost:${port}`);
   });
 

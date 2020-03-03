@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import io from 'socket.io-client';
+
+const ggg = io('http://localhost:4001');
+
 
 const Index = () => {
-  const [turn, setTurn] = useState<number | undefined>();
+  const [turn, setTurn] = useState<number | string | undefined>();
+
+  ggg.on('hey', (message: string) => {
+    setTurn(message);
+  });
+  // useEffect(() => {
+
+  // }, []);
 
   return (
     <>
@@ -18,6 +29,14 @@ const Index = () => {
         BUTTN
       </button>
       <h2>{turn}</h2> */}
+      <h2>{turn}</h2>
+      <button
+        onClick={() => {
+          ggg.emit('chat message', 'your ass');
+        }}
+      >
+        JJ
+      </button>
     </>
   );
 };
