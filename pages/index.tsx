@@ -17,7 +17,7 @@ const Index = () => {
 
   return (
     <>
-      <h1>GAME JAM GAME !!!!!!!!!!!</h1>
+      <h1>GAME JAM GAME OH YEAH!!!!!!!!!!!</h1>
       {/* <button
         onClick={() => {
           axios.get('/current_turn').then(axiosResponse => {
@@ -29,14 +29,14 @@ const Index = () => {
         BUTTN
       </button>
       <h2>{turn}</h2> */}
-      <h2>{turn}</h2>
+      {/* <h2>{turn}</h2>
       <button
         onClick={() => {
           ggg.emit('chat message', 'your ass');
         }}
       >
         JJ
-      </button>
+      </button> */}
     </>
   );
 };
