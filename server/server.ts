@@ -24,6 +24,16 @@ const handle = app.getRequestHandler();
 
 // server.listen(3000);
 
+let circleX = 100;
+let circleY = 100;
+let squareX = 100;
+let squareY = 100;
+
+export interface UpdatePlayerPosition {
+  x: number;
+  y: number;
+}
+
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
     type Query {
@@ -63,7 +73,6 @@ app.prepare().then(() => {
 
   const io = socketIo(server);
 
-  
   setInterval(() => {
     currentTurn++;
     connectUserIds.forEach(id => {
@@ -90,13 +99,49 @@ app.prepare().then(() => {
   //   console.log('listening on *:3000');
   // });
 
-  expressHandler.get('/example', (req, res) => {
+  // expressHandler.get('/example', (req, res) => {
+  //   res.sendStatus(200);
+  // });
+
+  expressHandler.get('/gimme_dat_circle_horizontal', (req, res) => {
+    res.status(200).send(circleX.toString());
+  });
+
+  expressHandler.get('/gimme_dat_circle_vertical', (req, res) => {
+    res.status(200).send(circleY.toString());
+  });
+
+  expressHandler.get('/gimme_dat_square_horizontal', (req, res) => {
+    res.status(200).send(squareX.toString());
+  });
+
+  expressHandler.get('/gimme_dat_square_vertical', (req, res) => {
+    res.status(200).send(squareY.toString());
+  });
+
+  expressHandler.post('/update_dat_circle_location', (req, res) => {
+    console.log(req.body)
+
+
+    const requestBodyWithTypeInfo = req.body as UpdatePlayerPosition;
+    circleX = circleX + requestBodyWithTypeInfo.x;
+    circleY = circleY + requestBodyWithTypeInfo.y;
+
     res.sendStatus(200);
   });
 
-  expressHandler.get('/current_turn', (req, res) => {
-    res.status(200).send('' + currentTurn);
+  expressHandler.post('/update_dat_square_location', (req, res) => {
+    console.log(req.body)
+    const requestBodyWithTypeInfo = req.body as UpdatePlayerPosition;
+    squareX = squareX + requestBodyWithTypeInfo.x;
+    squareY = squareY + requestBodyWithTypeInfo.y;
+
+    res.sendStatus(200);
   });
+
+  // expressHandler.get('/current_turn', (req, res) => {
+  //   res.status(200).send('' + currentTurn);
+  // });
 
   expressHandler.all('*', (req, res) => {
     return handle(req, res);
